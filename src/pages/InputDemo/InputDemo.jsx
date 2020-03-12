@@ -1,17 +1,58 @@
 import React from 'react';
+import * as yup from 'yup';
 
-import { TextField, SelectField, RadioGroup } from '../../components';
+
+import {
+  TextField, SelectField, RadioGroup, Button,
+} from '../../components';
 import { selectOptions, radioOptionsCricket, radioOptionsFootball } from '../../configs/constants';
+
+// const schema = yup.object().shape({
+//   name: yup.string('Name is required field').required('Name is required field').min(3),
+//   sport: yup.string('Sport is a required feild').required('Sport is a required feild'),
+
+// });
+
+// const schemaTest = {
+//   name: 'shekhar',
+//   sport: 'cricket',
+// };
+
+
+// console.log(schema.validateSync(schemaTest));
+
 
 class InputDemo extends React.Component {
   constructor(props) {
     super(props);
+    this.error = false;
+    this.nameTouched = false;
+    this.sportTouched = false;
+    this.whatyoudoTouched = false;
+    this.schema = yup.object().shape({
+      name: yup.string('Name is required field').required('Name is required field').min(3),
+      sport: yup.string('Sport is a required feild').required('Sport is a required feild'),
+      cricket: yup.string().when('sport', {
+        is: 'cricket',
+        then: yup.string().required('what you do is required'),
+      }),
+      football: yup.string().when('sport', {
+        is: 'football',
+        then: yup.string().required('what you do is required'),
+      }),
+
+    });
     this.state = {
-      name: 'chandrashekhar',
+      name: '',
       sport: '',
       cricket: '',
       football: '',
-
+      touched: {
+        name: false,
+        sport: false,
+        cricket: false,
+        football: false,
+      },
     };
   }
 
@@ -49,13 +90,50 @@ class InputDemo extends React.Component {
     return sport === 'cricket' ? radioOptionsCricket : radioOptionsFootball;
   }
 
+  onClick = () => {
+    alert('Successfull');
+  }
+
+  hasErrors = () => {
+    try {
+      this.schema.validateSync(this.state);
+    } catch (err) {
+      return true;
+    }
+    return false;
+  }
+
+  isTouched = (field) => {
+    const { touched } = this.state;
+    this.setState({ touched: { ...touched, [field]: true } });
+  }
+
+
+  getError = (field) => {
+    const { touched } = this.state;
+    if (touched[field] && this.hasErrors()) {
+      try {
+        this.schema.validateSyncAt(field, this.state);
+      } catch (err) {
+        return err.message;
+      }
+    }
+    return null;
+  };
+
+
   render() {
     console.log(this.state);
     const { sport, name } = this.state;
     return (
       <>
         <p><b>Name</b></p>
-        <TextField onChange={this.handlerOnChangeTextField} erroe={this.error} value={name} />
+        <TextField
+          onChange={this.handlerOnChangeTextField}
+          error={this.getError('name')}
+          value={name}
+          onBlur={() => this.isTouched('name')}
+        />
 
         <p><b>Select the game you play?</b></p>
         <SelectField
@@ -63,6 +141,8 @@ class InputDemo extends React.Component {
           defaultText="Select"
           onChange={this.handlerOnChangeSelectField}
           Value={sport}
+          error={this.getError('sport')}
+          onBlur={() => this.isTouched('sport')}
         />
 
         {
@@ -73,11 +153,16 @@ class InputDemo extends React.Component {
                 options={this.getRadioOption()}
                 onChange={this.handlerOnChangeRadioOption}
                 Value=""
-                error=""
+                error={this.getError(sport)}
+                onBlur={() => this.isTouched(sport)}
               />
             </>
           )
         }
+        <div align="right">
+          <Button value="cancle" />
+          <Button value="submit" disabled={this.hasErrors()} onClick={this.onClick} />
+        </div>
       </>
     );
   }
