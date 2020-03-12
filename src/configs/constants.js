@@ -45,3 +45,5 @@ export const radioOptionsFootball = [
     value: 'striker',
   },
 ];
+
+export const Operators = ['+', '-', '/', '*'];
