@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Input from './style';
+
+import Input, { P } from './style';
 
 // day 5
 // const TextField = (props) => {
@@ -11,14 +12,24 @@ import Input from './style';
 //   );
 // };
 
+
 const TextField = (props) => {
-  const { onChange, value, error } = props;
-  // console.log('inside TextField',onChange, value, error);
+  const {
+    onChange, value, error, onBlur,
+  } = props;
+  console.log('inside TextField', error);
 
   return (
-    <Input type="text" onChange={onChange} value={value} error={error} />
+    <>
+      <Input type="text" onChange={onChange} value={value} onBlur={onBlur} />
+      <P>
+        {error}
+      </P>
+
+    </>
   );
 };
+
 
 TextField.propTypes = {
 

@@ -8,6 +8,11 @@ const Select = styled.select`
   border-radius: 4px;
   box-sizing: border-box;
 `;
+export const P = styled.p`
+color: red;
+fontsize: 10px;
+margin: auto;
+`;
 
 
 export default Select;

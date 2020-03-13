@@ -34,5 +34,12 @@ border: 1px solid black;
 padding: 6px;
 `;
 
+export const P = styled.p`
+color: red;
+fontsize: 10px;
+margin: auto;
+`;
+
+
 export { Para, DivWrapper };
 export default Input;

@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Select from './style';
+import Select, { P } from './style';
 
 const SelectField = (props) => {
   // console.log('props inside SelectField', props);
   const {
-    options, defaultText, onChange, Value, error,
+    options, defaultText, onChange, Value, error, onBlur,
 
   } = props;
-  // console.log('inside selectField', defaultText);
+  console.log('inside selectField', onBlur);
   return (
     <>
-      <Select value={Value} onChange={onChange}>
+      <Select value={Value} onChange={onChange} onBlur={onBlur}>
         {defaultText && <option>{defaultText}</option>}
         {
           options && options.length && options.map(({ value, label }) => (
@@ -22,7 +22,7 @@ const SelectField = (props) => {
 
 
       </Select>
-      <p>{error}</p>
+      <P>{error}</P>
     </>
   );
 };
