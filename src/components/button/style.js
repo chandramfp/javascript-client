@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Buttons = styled.button`
-${(props) => props.type === 'cancle' && css`
+${(props) => props.type === 'cancel' && css`
 background-color: white;
 color: black;
 padding: 12px;

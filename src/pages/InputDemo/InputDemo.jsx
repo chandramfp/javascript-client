@@ -160,7 +160,7 @@ class InputDemo extends React.Component {
           )
         }
         <div align="right">
-          <Button value="cancle" />
+          <Button value="cancel" />
           <Button value="submit" disabled={this.hasErrors()} onClick={this.onClick} />
         </div>
       </>
