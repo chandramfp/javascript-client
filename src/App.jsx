@@ -1,12 +1,29 @@
 import React from 'react';
+import {
+  BrowserRouter as Router, Route, Redirect, Switch,
+} from 'react-router-dom';
 
-
-import { Trainee } from './pages/Trainee/index';
+import { AuthRoute, PrivateRoute } from './routes/index';
+import {
+  Trainee, Login, TextFieldDemo, ChildrenDemo, InputDemo, NoMatch,
+} from './pages/index';
 
 
 function App() {
   return (
-    <Trainee />
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Redirect to="/Trainee" />
+        </Route>
+        <AuthRoute path="/login" component={Login} />
+        <PrivateRoute path="/TextFieldDemo" component={TextFieldDemo} />
+        <PrivateRoute path="/Trainee" component={Trainee} />
+        <PrivateRoute path="/ChildrenDemo" component={ChildrenDemo} />
+        <PrivateRoute path="/InputDemo" component={InputDemo} />
+        <PrivateRoute component={NoMatch} />
+      </Switch>
+    </Router>
   );
 }
 

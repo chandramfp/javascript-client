@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 
 import AddDialog from './components';
-import { ButtonAppBar } from '../components/index';
 
 
 class Trainee extends React.Component {
@@ -41,7 +40,6 @@ class Trainee extends React.Component {
     const { open } = this.state;
     return (
       <>
-        <ButtonAppBar />
         <br />
         <Button variant="outlined" color="primary" onClick={this.onOpen}>
           ADD TRAINEE
