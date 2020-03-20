@@ -1,4 +1,5 @@
 import AddDialog from './components/index';
-import Trainee from './Trainee';
+import TraineeList from './TraineeList';
 
-export { AddDialog, Trainee };
+
+export { AddDialog, TraineeList };
