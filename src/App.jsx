@@ -5,8 +5,9 @@ import {
 
 import { AuthRoute, PrivateRoute } from './routes/index';
 import {
-  Trainee, Login, TextFieldDemo, ChildrenDemo, InputDemo, NoMatch,
+  Login, TextFieldDemo, ChildrenDemo, InputDemo, NoMatch,
 } from './pages/index';
+import Trainee from './pages/Trainee/Trainee';
 
 
 function App() {

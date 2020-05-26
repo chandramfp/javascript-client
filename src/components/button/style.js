@@ -40,4 +40,17 @@ margin: 4px 2px;
 cursor: pointer;
 border-radius: 6px;
 `};
+${(props) => props.type === 'Back' && css`
+background-color: #e0e0e0;
+color: #424242;
+padding: 12px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size:16px;
+margin: 4px 2px;
+cursor: pointer;
+border-radius: 6px;
+border: 1px soilid black;
+`};
 `;

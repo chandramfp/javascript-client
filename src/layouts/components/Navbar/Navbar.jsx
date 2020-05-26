@@ -28,7 +28,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.title}>
             Trainee Portal
           </Typography>
-          <Button component={Link} to="Trainee" color="inherit">Trainee</Button>
+          <Button component={Link} to="/Trainee" color="inherit">Trainee</Button>
           <Button component={Link} to="/TextFieldDemo" color="inherit">TextField Demo</Button>
           <Button component={Link} to="/InputDemo" color="inherit">Input Demo</Button>
           <Button component={Link} to="/ChildrenDemo" color="inherit" className={classes.menuButton}>Children Demo</Button>
