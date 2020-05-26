@@ -26,7 +26,7 @@ class Math extends React.Component {
 Math.propTypes = {
   first: PropType.number.isRequired,
   second: PropType.number.isRequired,
-  operator: PropType.oneOf(['+', '-', '/', '*']).isRequired,
+  operator: PropType.oneOf(['+', '-', '/', '*', '^']).isRequired,
   children: PropType.func,
 };
 Math.defaultProps = {
