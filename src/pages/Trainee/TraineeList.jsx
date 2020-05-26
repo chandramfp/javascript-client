@@ -1,73 +1,91 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import AddDialog from './components/AddDialog/AddDialog';
 import trainee from './data/trainee';
+import { TableComponent } from '../../components/index';
 
 
-import AddDialog from './components';
-// import { TableComponent } from '../../components';
+const useStyles = (theme) => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    margin: theme.spacing(2, 0, 2),
+  },
+});
 
-
-class TraineeList extends React.Component {
+class Trainee extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       open: false,
-      name: '',
-      email: '',
-      password: '',
     };
   }
 
-  onOpen = () => {
-    let { open } = this.state;
-    open = true;
-    this.setState({ open });
-  }
+  openDialog = (status) => {
+    this.setState({ open: status });
+  };
 
-  onClose = () => {
-    let { open } = this.state;
-    open = false;
-    this.setState({ open });
-  }
 
-  onSubmit = (name, password, email) => {
-    this.setState({
-      name,
-      password,
-      email,
-    });
-  }
+  onSubmit = (data) => {
+    this.setState({ open: false }, () => { console.log(data); });
+  };
 
   render() {
-    console.log(this.state);
     const { open } = this.state;
+    const { classes } = this.props;
+
     return (
       <>
-        <br />
-        <Button variant="outlined" color="primary" onClick={this.onOpen}>
-          ADD TRAINEELIST
-        </Button>
-        <AddDialog
-          onClose={this.onClose}
-          open={open}
-          onSubmit={(name, password, email) => this.onSubmit(name, password, email)}
+        <div className={classes.root}>
+          <Button variant="outlined" color="primary" onClick={() => this.openDialog(true)}>
+            ADD TRAINEE
+          </Button>
+        </div>
+        <TableComponent
+          id="id"
+          data={trainee}
+          columns={
+            [
+              {
+                field: 'name',
+                label: 'Name',
+                align: 'center',
+              },
+              {
+                field: 'email',
+                label: 'Email Address',
+                align: 'center',
+              },
+            ]
+          }
         />
-        {/* <TableComponent /> */}
+        <AddDialog
+          onClose={() => this.openDialog(false)}
+          onSubmit={() => this.onSubmit}
+          open={open}
+        />
         <ul>
           {
             trainee && trainee.length && trainee.map((element) => (
-              <li>
-                <Link to={`/Trainee/${element.id}`}>{element.name}</Link>
-              </li>
+              <Fragment key={element.id}>
+                <li key={element.id}>
+                  <Link to={`/Trainee/${element.id}`}>{element.name}</Link>
+                </li>
+              </Fragment>
             ))
           }
         </ul>
-
       </>
     );
   }
 }
 
+Trainee.propTypes = {
+  classes: PropTypes.objectOf(PropTypes.string).isRequired,
+};
 
-export default TraineeList;
+export default withStyles(useStyles)(Trainee);
