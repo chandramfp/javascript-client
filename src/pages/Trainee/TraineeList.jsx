@@ -5,6 +5,7 @@ import trainee from './data/trainee';
 
 
 import AddDialog from './components';
+// import { TableComponent } from '../../components';
 
 
 class TraineeList extends React.Component {
@@ -52,6 +53,7 @@ class TraineeList extends React.Component {
           open={open}
           onSubmit={(name, password, email) => this.onSubmit(name, password, email)}
         />
+        {/* <TableComponent /> */}
         <ul>
           {
             trainee && trainee.length && trainee.map((element) => (
