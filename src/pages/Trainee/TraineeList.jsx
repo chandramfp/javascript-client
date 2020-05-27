@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import AddDialog from './components/AddDialog/AddDialog';
 import trainee from './data/trainee';
 import { TableComponent } from '../../components/index';
+import getDateFormatted from './helper';
 
 
 const useStyles = (theme) => ({
@@ -22,6 +23,9 @@ class Trainee extends Component {
 
     this.state = {
       open: false,
+      selected: '',
+      orderBy: '',
+      order: 'asc',
     };
   }
 
@@ -34,8 +38,21 @@ class Trainee extends Component {
     this.setState({ open: false }, () => { console.log(data); });
   };
 
+  handleSelect = (event, data) => {
+    this.setState({ selected: event.target.value }, () => console.log(data));
+  };
+
+  handleSort = (field) => (event) => {
+    const { order } = this.state;
+    this.setState({
+      orderBy: field,
+      order: order === 'asc' ? 'desc' : 'asc',
+    });
+  }
+
+
   render() {
-    const { open } = this.state;
+    const { open, order, orderBy } = this.state;
     const { classes } = this.props;
 
     return (
@@ -59,9 +76,20 @@ class Trainee extends Component {
                 field: 'email',
                 label: 'Email Address',
                 align: 'center',
+                format: (value) => value && value.toUpperCase(),
+              },
+              {
+                field: 'createdAt',
+                label: 'Date',
+                align: 'right',
+                format: getDateFormatted,
               },
             ]
           }
+          orderBy={orderBy}
+          order={order}
+          onSort={this.handleSort}
+          onSelect={this.handleSelect}
         />
         <AddDialog
           onClose={() => this.openDialog(false)}
