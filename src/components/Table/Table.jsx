@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -37,7 +38,8 @@ const useStyles = makeStyles({
 
 export default function CustomizedTables(props) {
   const {
-    id, data, columns, onSelect, order, orderBy, onSort,
+    id, data, columns, onSelect, order, orderBy, onSort, actions, rowsPerPage,
+    page, onChangePage, onChangeRowsPerPage, count,
   } = props;
   const classes = useStyles();
   return (
@@ -62,7 +64,7 @@ export default function CustomizedTables(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((element) => (
+          {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element) => (
             <StyledTableRow hover key={element[id]}>
               {
                 columns && columns.length && columns.map(({ field, align, format }) => (
@@ -73,9 +75,28 @@ export default function CustomizedTables(props) {
 
                 ))
               }
+              <div>
+                {actions && actions.length && actions.map(({ icon, handler }) => (
+                  <div onClick={() => handler(element)}>
+                    {icon}
+                  </div>
+                ))}
+              </div>
             </StyledTableRow>
           ))}
         </TableBody>
+        <TablePagination
+          rowsPerPageOptions={[3, 5, 10, 25]}
+          count={count}
+          SelectProps={{
+            inputProps: { 'aria-label': 'rows per page' },
+            native: true,
+          }}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={onChangePage}
+          onChangeRowsPerPage={onChangeRowsPerPage}
+        />
       </Table>
     </TableContainer>
   );
@@ -90,10 +111,18 @@ CustomizedTables.propTypes = {
   onSort: PropTypes.func.isRequired,
   orderBy: PropTypes.string,
   order: PropTypes.oneOf(['asc', 'desc']),
+  actions: PropTypes.arrayOf(PropTypes.object),
+  rowsPerPage: PropTypes.number,
+  page: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  onChangeRowsPerPage: PropTypes.func.isRequired,
+  count: PropTypes.number.isRequired,
 };
 
 
 CustomizedTables.defaultProps = {
   orderBy: '',
   order: 'asc',
+  rowsPerPage: 100,
+  actions: {},
 };
