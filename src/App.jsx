@@ -9,22 +9,26 @@ import {
 } from './pages/index';
 import Trainee from './pages/Trainee/Trainee';
 
+import SnackBarProvider from './contexts/index';
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <Redirect to="/Trainee" />
-        </Route>
-        <AuthRoute path="/login" component={Login} />
-        <PrivateRoute path="/TextFieldDemo" component={TextFieldDemo} />
-        <PrivateRoute path="/Trainee" component={Trainee} />
-        <PrivateRoute path="/ChildrenDemo" component={ChildrenDemo} />
-        <PrivateRoute path="/InputDemo" component={InputDemo} />
-        <PrivateRoute component={NoMatch} />
-      </Switch>
-    </Router>
+    <SnackBarProvider>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Redirect to="/Trainee" />
+          </Route>
+          <AuthRoute path="/login" component={Login} />
+          <PrivateRoute path="/TextFieldDemo" component={TextFieldDemo} />
+          <PrivateRoute path="/Trainee" component={Trainee} />
+          <PrivateRoute path="/ChildrenDemo" component={ChildrenDemo} />
+          <PrivateRoute path="/InputDemo" component={InputDemo} />
+          <PrivateRoute component={NoMatch} />
+        </Switch>
+      </Router>
+    </SnackBarProvider>
+
   );
 }
 

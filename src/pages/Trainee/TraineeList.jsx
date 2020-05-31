@@ -81,7 +81,7 @@ class Trainee extends Component {
   };
 
   handleDeleteClick = (data) => {
-    this.setState({ RemoveOpen: false }, () => console.log('Deleted data', data.data));
+    this.setState({ RemoveOpen: false }, () => console.log('Deleted data', data));
   };
 
   handleChangePage = (event, newPage) => {

@@ -17,10 +17,12 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
+import { MyContext } from '../../../../contexts/index';
+
 const schema = yup.object().shape({
   name: yup.string().required('Name is required field').min(3, 'minimum 3 character').label('name'),
   email: yup.string().email()
-  // .matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((successive.tech))$/)
+    // .matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((successive.tech))$/)
     .required()
     .label('Email Address'),
   password: yup.string()
@@ -53,6 +55,7 @@ class AddDialog extends React.Component {
         password: false,
         confirmpassword: false,
       },
+      isValid: false,
     };
   }
 
@@ -108,11 +111,23 @@ class AddDialog extends React.Component {
     this.state = '';
   }
 
+  formReset = () => {
+    this.setState({
+      name: '',
+      email: '',
+      password: '',
+      confirmpassword: '',
+      isValid: false,
+      touched: {},
+    });
+  }
+
+
   render() {
     // console.log('current state', this.state);
     const { open, onClose } = this.props;
     const {
-      name, email, password, confirmpassword,
+      name, email, password, confirmpassword, isValid,
     } = this.state;
     return (
       <>
@@ -211,9 +226,23 @@ class AddDialog extends React.Component {
               <Button onClick={onClose} color="primary">
                 Cancel
               </Button>
-              <Button onClick={this.handleClick} color="primary" disabled={this.hasErrors()}>
-                Submit
-              </Button>
+              <MyContext.Consumer>
+                {({ openSnackBar }) => (
+                  <>
+                    <Button
+                      disabled={!isValid, this.hasErrors()}
+                      onClick={() => {
+                        this.handleClick({ name, email, password });
+                        this.formReset();
+                        openSnackBar('This is a success message ! ', 'success');
+                      }}
+                      color="primary"
+                    >
+                      Submit
+                    </Button>
+                  </>
+                )}
+              </MyContext.Consumer>
             </DialogActions>
           </Dialog>
         </div>
