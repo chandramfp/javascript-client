@@ -1,59 +1,82 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+import * as moment from 'moment';
+import { MyContext } from '../../contexts/index';
 
-} from '@material-ui/core';
+class RemoveDialog extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: '',
+    };
+  }
 
+  handleSnackBarMessage = (data, openSnackBar) => {
+    const date = '2019-02-14T18:15:11.778Z';
+    const isAfter = (moment(data.createdAt).isAfter(date));
+    if (isAfter) {
+      this.setState({
+        message: 'This is a success Message! ',
+      }, () => {
+        const { message } = this.state;
+        openSnackBar(message, 'success');
+      });
+    } else {
+      this.setState({
+        message: 'This is an error',
+      }, () => {
+        const { message } = this.state;
+        openSnackBar(message, 'error');
+      });
+    }
+  }
 
-export default function RemoveDialog(props) {
-  const {
-    open, onClose, onSubmit, data,
-  } = props;
-  return (
-    <>
+  render = () => {
+    const {
+      onClose, open, onSubmit, data,
+    } = this.props;
+    return (
       <div>
-        <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
+        <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title" fullWidth>
           <DialogTitle id="form-dialog-title">Remove Trainee</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              do you really want to remove trainee?
+              Do you really want to remove this item?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={onClose} color="primary">
               Cancel
             </Button>
-            <Button
-              onClick={() => onSubmit({
-                data,
-              })}
-              color="primary"
-            >
-              Delete
-            </Button>
+            <MyContext.Consumer>
+              {(value) => {
+                const { openSnackBar } = value;
+                return (
+                  <>
+                    <Button color="primary" variant="contained" onClick={() => { onSubmit(data); this.handleSnackBarMessage(data, openSnackBar); }}>
+                      Delete
+                    </Button>
+                  </>
+                );
+              }}
+            </MyContext.Consumer>
           </DialogActions>
         </Dialog>
       </div>
-    </>
-  );
+    );
+  }
 }
+export default RemoveDialog;
 
 RemoveDialog.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func,
-  onSubmit: PropTypes.func,
-  data: PropTypes.objectOf(PropTypes.string),
-};
-
-RemoveDialog.defaultProps = {
-  open: '',
-  onClose: '',
-  onSubmit: '',
-  data: {},
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  data: PropTypes.objectOf(PropTypes.string).isRequired,
 };
