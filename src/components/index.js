@@ -4,9 +4,9 @@ import SelectField from './SelectField/index';
 import RadioGroup from './RadioGroup/index';
 import Button from './button/index';
 import Math from './Math/index';
-import TableComponent from './Table/index';
+import TableContainer from './Table/index';
 
 
 export {
-  Para, DivWrapper, TextField, Slider, SelectField, RadioGroup, Button, Math, TableComponent,
+  Para, DivWrapper, TextField, Slider, SelectField, RadioGroup, Button, Math, TableContainer,
 };

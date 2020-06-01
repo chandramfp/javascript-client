@@ -1,3 +1,7 @@
-import TableComponent from './Table';
+// import TableComponent from './Table';
 
-export default TableComponent;
+// export default TableComponent;
+
+import TableContainer from './Table';
+
+export default TableContainer;

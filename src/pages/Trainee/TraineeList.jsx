@@ -1,12 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AddDialog from './components/AddDialog/AddDialog';
 import trainee from './data/trainee';
-import { TableComponent } from '../../components/index';
+// import { TableComponent } from '../../components/index';
+import { TableContainer } from '../../components/index';
 import getDateFormatted from './helper';
+import EditDialog from '../../components/EditDialog/EditDialog';
+import RemoveDialog from '../../components/RemoveDialog/RemoveDialog';
 
 
 const useStyles = (theme) => ({
@@ -26,6 +31,12 @@ class Trainee extends Component {
       selected: '',
       orderBy: '',
       order: 'asc',
+      EditOpen: false,
+      RemoveOpen: false,
+      page: 0,
+      rowsPerPage: 5,
+      edata: {},
+      deleteData: {},
     };
   }
 
@@ -47,12 +58,50 @@ class Trainee extends Component {
     this.setState({
       orderBy: field,
       order: order === 'asc' ? 'desc' : 'asc',
+      page: '',
     });
   }
 
 
+  // handleEditDialogOpen = (data) => {
+  //   this.setState({ EditOpen: true, edata: data }, () => console.log(data));
+  // }
+
+  handleEditDialogOpen = (data) => {
+    this.setState({ EditOpen: true, edata: data });
+  }
+
+  handleDeleteDialogOpen = (data) => {
+    // console.log("dddddddddddddddd", data);
+    this.setState({ RemoveOpen: true, deleteData: data });
+  }
+
+  handleClick = (data) => {
+    this.setState({ EditOpen: false }, () => console.log('Edited data', data));
+  };
+
+  handleDeleteClick = (data) => {
+    this.setState({ RemoveOpen: false }, () => console.log('Deleted data', data.data));
+  };
+
+  handleChangePage = (event, newPage) => {
+    this.setState({
+      page: newPage,
+    });
+  };
+
+  handleChangeRowsPerPage = (event) => {
+    this.setState({
+      rowsPerPage: event.target.value,
+      page: 0,
+
+    });
+  };
+
   render() {
-    const { open, order, orderBy } = this.state;
+    const {
+      open, order, orderBy, EditOpen, RemoveOpen, page, rowsPerPage, edata, deleteData,
+    } = this.state;
     const { classes } = this.props;
 
     return (
@@ -62,7 +111,20 @@ class Trainee extends Component {
             ADD TRAINEE
           </Button>
         </div>
-        <TableComponent
+        <EditDialog
+          data={edata}
+          onClose={this.handleClick}
+          onSubmit={this.handleClick}
+          open={EditOpen}
+        />
+        <RemoveDialog
+          data={deleteData}
+          onClose={this.handleDeleteClick}
+          onSubmit={this.handleDeleteClick}
+          open={RemoveOpen}
+        />
+        {/* <TableComponent */}
+        <TableContainer
           id="id"
           data={trainee}
           columns={
@@ -86,10 +148,27 @@ class Trainee extends Component {
               },
             ]
           }
+          actions={
+            [
+              {
+                icon: <EditIcon />,
+                handler: this.handleEditDialogOpen,
+              },
+              {
+                icon: <DeleteIcon />,
+                handler: this.handleDeleteDialogOpen,
+              },
+            ]
+          }
           orderBy={orderBy}
           order={order}
           onSort={this.handleSort}
           onSelect={this.handleSelect}
+          count={100}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          onChangePage={this.handleChangePage}
         />
         <AddDialog
           onClose={() => this.openDialog(false)}
