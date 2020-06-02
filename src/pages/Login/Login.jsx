@@ -17,15 +17,27 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles } from '@material-ui/core/styles';
 
 
+import { Redirect } from 'react-router-dom';
+import ls from 'local-storage';
+
+import callApi from '../../lib/utils/api';
+import { MyContext } from '../../contexts/index';
+
+
 const schema = yup.object().shape({
   email: yup.string().email()
-  // .matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((successive.tech))$/)
+    // .matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((successive.tech))$/)
     .required()
     .label('Email Address'),
   password: yup.string()
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, 'must contain 8 character, atleast one upper letter,one lowercase letter and one number')
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      'Must contain 8 characters at least one uppercase one lowercase and one number')
     .required('password is required'),
 });
+
+const Spinner = () => (
+  <img src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif" className="zoom2" height="20" alt="spinner" />
+);
 
 const useStyles = (theme) => ({
 
@@ -55,17 +67,18 @@ class Login extends React.Component {
     super(props);
     this.state = {
       email: '',
-      passwors: '',
+      password: '',
       signin: '',
       errors: {},
       touched: {
         email: false,
         password: false,
-        signin: false,
       },
+      message: '',
+      loading: false,
+      Redirect: false,
     };
   }
-
 
   handlerOnChangeEmailField = (e) => {
     this.setState({ email: e.target.value });
@@ -102,8 +115,51 @@ class Login extends React.Component {
     return null;
   };
 
+  handleClickLogin = async (data, openSnackBar) => {
+    // const { email, password } = data;
+    // console.log('eeeeeeeeeeeee', email);
+    // console.log('pppppppppppp', password);
+
+    this.setState({
+      loading: true,
+      hasError: true,
+    });
+    await callApi('post', '/user/login', data);
+    this.setState({ loading: false });
+    if (ls.get('token')) {
+      this.setState({
+        redirect: true,
+        hasError: false,
+      });
+    } else {
+      this
+        .setState({
+          message: 'This is an error Message!',
+        }, () => {
+          const { message } = this.state;
+          openSnackBar(message, 'error');
+        });
+    }
+  }
+
+  renderRedirect = () => {
+    const { redirect } = this.state;
+    if (redirect) {
+      return <Redirect to="/trainee" />;
+    }
+  }
+
+  formReset = () => {
+    this.setState({
+      email: '',
+      password: '',
+      touched: {},
+    });
+  }
+
   render() {
     const { classes } = this.props;
+    const { email, password, loading } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -153,16 +209,31 @@ class Login extends React.Component {
                   ),
                 }}
               />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={this.hasErrors()}
-              >
-                Sign In
-              </Button>
+              <MyContext.Consumer>
+                {({ openSnackBar }) => (
+                  <Button
+                    // type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    disabled={this.hasErrors()}
+                    onClick={() => {
+                      this.handleClickLogin({ email, password }, openSnackBar);
+                      this.formReset();
+                    }}
+                  // onClick={() => callApi({ email, password })}
+                  >
+                    {loading && (
+                      <Spinner />
+                    )}
+                    {loading && <span>Signing in</span>}
+                    {!loading && <span>Sign in</span>}
+                    {this.renderRedirect()}
+                    {/* Sign In */}
+                  </Button>
+                )}
+              </MyContext.Consumer>
             </form>
           </div>
         </Box>
@@ -174,7 +245,7 @@ class Login extends React.Component {
 
 
 Login.propTypes = {
-  classes: PropTypes.objectOf(PropTypes.object).isRequired,
+  classes: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 export default withStyles(useStyles)(Login);

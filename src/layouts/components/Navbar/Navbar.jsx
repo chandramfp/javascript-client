@@ -6,6 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
+const ls = require('local-storage');
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,6 +19,12 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
 }));
+
+const handleLogout = () => {
+  ls.remove('token');
+};
+
+
 export default function ButtonAppBar() {
   const classes = useStyles();
 
@@ -32,7 +39,7 @@ export default function ButtonAppBar() {
           <Button component={Link} to="/TextFieldDemo" color="inherit">TextField Demo</Button>
           <Button component={Link} to="/InputDemo" color="inherit">Input Demo</Button>
           <Button component={Link} to="/ChildrenDemo" color="inherit" className={classes.menuButton}>Children Demo</Button>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit" href="/login" onClick={() => handleLogout()}>Logout</Button>
         </Toolbar>
       </AppBar>
     </div>

@@ -108,7 +108,7 @@ class AddDialog extends React.Component {
     const { name, password, email } = this.state;
     onSubmit(name, password, email);
     onClose();
-    this.state = '';
+    this.setState = '';
   }
 
   formReset = () => {
