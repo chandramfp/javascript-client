@@ -5,8 +5,9 @@ import RadioGroup from './RadioGroup/index';
 import Button from './button/index';
 import Math from './Math/index';
 import TableContainer from './Table/index';
+import withLoaderandMessage from './HOC/index';
 
 
 export {
-  Para, DivWrapper, TextField, Slider, SelectField, RadioGroup, Button, Math, TableContainer,
+  Para, DivWrapper, TextField, Slider, SelectField, RadioGroup, Button, Math, TableContainer, withLoaderandMessage,
 };
