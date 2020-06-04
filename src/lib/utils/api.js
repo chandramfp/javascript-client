@@ -1,24 +1,21 @@
 import axios from 'axios';
-import ls from 'local-storage';
+// import ls from 'local-storage';
 
 const callApi = async (method, url, data) => {
-  const { email, password } = data;
-  // console.log('>>>>>>>>>>', email);
-  // const URL = `https://express-training.herokuapp.com/api${url}`;
+  try {
+    const URL = process.env.REACT_APP_BASE_URL + url;
+    // console.log('token', ls.get('token'));
 
-  const URL = process.env.REACT_APP_BASE_URL + url;
-  await axios({
-    method,
-    url: URL,
-    data: {
-      password,
-      email,
-    },
-  }).then((response) => {
-    ls.set('token', response.data.data);
-    // console.log(ls.get('token'));
-  }).catch(() =>
+    const response = await axios({
+      method,
+      url: URL,
+      ...data,
+    });
+    // console.log(' return responseeeee', response);
+    return response.data;
+  } catch (error) {
     // console.log('Inside catch');
-    ({ status: 'error', message: 'This is a error message' }));
+    return { status: 'error', message: 'This is a error message' };
+  }
 };
 export default callApi;

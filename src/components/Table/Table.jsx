@@ -11,6 +11,9 @@ import Paper from '@material-ui/core/Paper';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PropTypes from 'prop-types';
 
+import withLoaderandMessage from '../HOC/index';
+
+
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
@@ -36,11 +39,16 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CustomizedTables(props) {
+
+function CustomizedTables(props) {
   const {
     id, data, columns, onSelect, order, orderBy, onSort, actions, rowsPerPage,
     page, onChangePage, onChangeRowsPerPage, count,
   } = props;
+
+  // console.log("inside Tableee");
+  // console.log('??????????????', props);
+
   const classes = useStyles();
   return (
     <TableContainer component={Paper}>
@@ -64,7 +72,10 @@ export default function CustomizedTables(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element) => (
+          {(rowsPerPage > 0
+            ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : data
+          ).map((element) => (
             <StyledTableRow hover key={element[id]}>
               {
                 columns && columns.length && columns.map(({ field, align, format }) => (
@@ -126,3 +137,5 @@ CustomizedTables.defaultProps = {
   rowsPerPage: 100,
   actions: {},
 };
+
+export default withLoaderandMessage(CustomizedTables);

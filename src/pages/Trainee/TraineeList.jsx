@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import ls from 'local-storage';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -12,6 +13,7 @@ import { TableContainer } from '../../components/index';
 import getDateFormatted from './helper';
 import EditDialog from '../../components/EditDialog/EditDialog';
 import RemoveDialog from '../../components/RemoveDialog/RemoveDialog';
+import callApi from '../../lib/utils/api';
 
 
 const useStyles = (theme) => ({
@@ -33,12 +35,47 @@ class Trainee extends Component {
       order: 'asc',
       EditOpen: false,
       RemoveOpen: false,
-      page: 0,
-      rowsPerPage: 5,
       edata: {},
       deleteData: {},
+      page: 0,
+      rowsPerPage: 20,
+      rowData: [],
+      loading: true,
+      count: 0,
+      message: '',
+
     };
   }
+
+
+  componentDidMount = (newPage) => {
+    const { rowsPerPage } = this.state;
+    const value = this.context;
+    callApi(
+      'get',
+      '/trainee',
+      {
+        params: { skip: newPage * rowsPerPage, limit: newPage * rowsPerPage + rowsPerPage },
+        headers: {
+          Authorization: ls.get('token'),
+        },
+      },
+    ).then((res) => {
+      if (res.data === undefined) {
+        this.setState({
+          loading: false,
+          message: 'This is an error',
+        }, () => {
+          const { message } = this.state;
+          value.openSnackBar(message, 'error');
+        });
+      } else {
+        // console.log('table res', res.data);
+        this.setState({ rowData: res.data.records, count: res.data.count, loading: false });
+      }
+    });
+  }
+
 
   openDialog = (status) => {
     this.setState({ open: status });
@@ -62,10 +99,19 @@ class Trainee extends Component {
     });
   }
 
+  handleChangePage = (event, newPage) => {
+    this.componentDidMount(newPage);
+    this.setState({
+      page: newPage,
+      loading: true,
+    });
+  };
+
 
   // handleEditDialogOpen = (data) => {
   //   this.setState({ EditOpen: true, edata: data }, () => console.log(data));
   // }
+
 
   handleEditDialogOpen = (data) => {
     this.setState({ EditOpen: true, edata: data });
@@ -84,13 +130,8 @@ class Trainee extends Component {
     this.setState({ RemoveOpen: false }, () => console.log('Deleted data', data));
   };
 
-  handleChangePage = (event, newPage) => {
-    this.setState({
-      page: newPage,
-    });
-  };
-
   handleChangeRowsPerPage = (event) => {
+    this.componentDidMount();
     this.setState({
       rowsPerPage: event.target.value,
       page: 0,
@@ -100,8 +141,13 @@ class Trainee extends Component {
 
   render() {
     const {
-      open, order, orderBy, EditOpen, RemoveOpen, page, rowsPerPage, edata, deleteData,
+      open, order, orderBy, EditOpen, RemoveOpen, page,
+      rowsPerPage, edata, deleteData, loading, count, rowData,
     } = this.state;
+
+    // console.log("inside traineelist");
+    // console.log("state", loading);
+
     const { classes } = this.props;
 
     return (
@@ -125,8 +171,8 @@ class Trainee extends Component {
         />
         {/* <TableComponent */}
         <TableContainer
-          id="id"
-          data={trainee}
+          loading={loading}
+          data={rowData}
           columns={
             [
               {
@@ -164,7 +210,7 @@ class Trainee extends Component {
           order={order}
           onSort={this.handleSort}
           onSelect={this.handleSelect}
-          count={100}
+          count={count}
           page={page}
           rowsPerPage={rowsPerPage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}

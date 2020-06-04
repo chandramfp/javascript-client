@@ -115,39 +115,50 @@ class Login extends React.Component {
     return null;
   };
 
-  handleClickLogin = async (data, openSnackBar) => {
-    // const { email, password } = data;
-    // console.log('eeeeeeeeeeeee', email);
-    // console.log('pppppppppppp', password);
-
+  handleClickLogin = async (Data, openSnackBar) => {
     this.setState({
       loading: true,
       hasError: true,
     });
-    await callApi('post', '/user/login', data);
+
+    const response = await callApi(
+      'post',
+      '/user/login',
+      {
+        data: Data,
+        headers: {
+          Authorization: ls.get('token'),
+        },
+      },
+    );
+    ls.set('token', response.data);
+
     this.setState({ loading: false });
-    if (ls.get('token')) {
+
+    const TokenGen = ls.get('token');
+
+    if (TokenGen !== 'undefined') {
       this.setState({
         redirect: true,
         hasError: false,
       });
     } else {
-      this
-        .setState({
-          message: 'This is an error Message!',
-        }, () => {
-          const { message } = this.state;
-          openSnackBar(message, 'error');
-        });
+      this.setState({
+        message: 'Invalid email and Password',
+      }, () => {
+        const { message } = this.state;
+        openSnackBar(message, 'error');
+      });
     }
   }
 
   renderRedirect = () => {
     const { redirect } = this.state;
     if (redirect) {
-      return <Redirect to="/trainee" />;
+      return <Redirect to="/Trainee" />;
     }
   }
+
 
   formReset = () => {
     this.setState({
