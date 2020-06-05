@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
 
 import withLoaderandMessage from '../HOC/index';
 
@@ -72,32 +73,37 @@ function CustomizedTables(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {(rowsPerPage > 0
-            ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : data
-          ).map((element) => (
-            <StyledTableRow hover key={element[id]}>
-              {
-                columns && columns.length && columns.map(({ field, align, format }) => (
+          {data.length ? (
+            <>
+              {data.map((element) => (
+                <StyledTableRow hover key={element[id]}>
+                  {
+                    columns && columns.length && columns.map(({ field, align, format }) => (
 
-                  <StyledTableCell onClick={(event) => onSelect(event, element.name)} align={align} component="th" scope="row">
-                    {format !== undefined ? format(element[field]) : element[field]}
-                  </StyledTableCell>
+                      <StyledTableCell onClick={(event) => onSelect(event, element.name)} align={align} component="th" scope="row">
+                        {format !== undefined ? format(element[field]) : element[field]}
+                      </StyledTableCell>
 
-                ))
-              }
-              <div>
-                {actions && actions.length && actions.map(({ icon, handler }) => (
-                  <div onClick={() => handler(element)}>
-                    {icon}
+                    ))
+                  }
+                  <div>
+                    {actions && actions.length && actions.map(({ icon, handler }) => (
+                      <div onClick={() => handler(element)}>
+                        {icon}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </StyledTableRow>
-          ))}
+                </StyledTableRow>
+              ))}
+            </>
+          ) : (
+            <Box paddingLeft="70%">
+              <h2>Oops No more Trainees</h2>
+            </Box>
+          )}
         </TableBody>
         <TablePagination
-          rowsPerPageOptions={[3, 5, 10, 25]}
+          rowsPerPageOptions={[0]}
           count={count}
           SelectProps={{
             inputProps: { 'aria-label': 'rows per page' },
@@ -115,7 +121,8 @@ function CustomizedTables(props) {
 
 
 CustomizedTables.propTypes = {
-  id: PropTypes.string.isRequired,
+  // id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSelect: PropTypes.func.isRequired,
@@ -136,6 +143,7 @@ CustomizedTables.defaultProps = {
   order: 'asc',
   rowsPerPage: 100,
   actions: {},
+  id: '',
 };
 
 export default withLoaderandMessage(CustomizedTables);
