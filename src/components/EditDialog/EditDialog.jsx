@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import PersonIcon from '@material-ui/icons/Person';
 import EmailIcon from '@material-ui/icons/Email';
+import ls from 'local-storage';
 import {
   Dialog,
   DialogActions,
@@ -15,6 +17,8 @@ import {
   Grid,
 } from '@material-ui/core';
 import { MyContext } from '../../contexts/SnackBarProvider/SnackBarProvider.jsx';
+import callApi from '../../lib/utils/api';
+
 
 const useStyles = () => ({
   root: {
@@ -30,7 +34,44 @@ class EditDialog extends Component {
       email: '',
       isValid: false,
       touched: {},
+      loading: false,
     };
+  }
+
+  onClickHandler = async (Data, openSnackBar) => {
+    const { onSubmit } = this.props;
+
+    this.setState({
+      loading: true,
+    });
+    const response = await callApi(
+      'put',
+      '/trainee',
+      {
+        data: { ...Data },
+        headers: {
+          Authorization: ls.get('token'),
+        },
+      },
+    );
+    this.setState({ loading: false });
+    if (response.status === 'ok') {
+      this.setState({
+        message: 'This is a success message',
+      }, () => {
+        const { message } = this.state;
+        onSubmit(Data);
+        window.location.reload(false);
+        openSnackBar(message, 'success');
+      });
+    } else {
+      this.setState({
+        message: 'This is a error message',
+      }, () => {
+        const { message } = this.state;
+        openSnackBar(message, 'error');
+      });
+    }
   }
 
   handleNameChange = (event) => {
@@ -96,12 +137,15 @@ class EditDialog extends Component {
   render() {
     const { classes } = this.props;
     const {
-      open, onClose, onSubmit, data,
+      open, onClose, data,
     } = this.props;
-    const { name, email, isValid } = this.state;
+    const {
+      name, email, isValid, loading,
+    } = this.state;
+    const { originalId: id } = data;
     return (
       <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Edit TRAINEE</DialogTitle>
+        <DialogTitle id="form-dialog-title">EDIT TRAINEE</DialogTitle>
         <DialogContent className={classes.useStyles}>
           <DialogContentText>
             Enter your trainee details
@@ -164,13 +208,19 @@ class EditDialog extends Component {
                 <Button
                   disabled={!isValid}
                   onClick={() => {
-                    onSubmit({ name, email });
+                    // onSubmit({ name, email });
+                    // this.formReset();
+                    // openSnackBar('This is a success message ! ', 'success');
                     this.formReset();
-                    openSnackBar('This is a success message ! ', 'success');
+                    this.onClickHandler({ name, email, id }, openSnackBar);
                   }}
                   color="primary"
                 >
-                  Submit
+                  {loading && (
+                    <CircularProgress size={15} color="primary" />
+                  )}
+                  {loading && <span>Submiting</span>}
+                  {!loading && <span>Submit</span>}
                 </Button>
               </>
             )}
