@@ -62,10 +62,6 @@ class Trainee extends Component {
     this.setState({ open: false }, () => { this.handleTable(page); });
   };
 
-  handleSelect = (data) => {
-    console.log(data);
-  };
-
   handleSort = (field) => (event) => {
     const { order } = this.state;
     this.setState({
